@@ -1,0 +1,12 @@
+.DS_Store
+.classpath
+.project
+.MathematicaResources
+*.class
+.cvsignore
+compile
+build
+javadoc
+bin
+log
+CVS
