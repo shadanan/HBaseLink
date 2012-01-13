@@ -129,11 +129,11 @@ public class HTable extends org.apache.hadoop.hbase.client.HTable {
   private byte[] row = null;
   private ResultScanner scanner;
   
-  private Object[] decodeKeyValues(KeyValue[] kvs) {
+  private Object[] decodeKeyValues(KeyValue[] kvs) throws IOException {
     return decodeKeyValues(kvs, null);
   }
   
-  private Object[] decodeKeyValues(KeyValue[] kvs, byte[] id) {
+  private Object[] decodeKeyValues(KeyValue[] kvs, byte[] id) throws IOException {
     Object[] row = null;
     int index = 0;
     
@@ -201,7 +201,7 @@ public class HTable extends org.apache.hadoop.hbase.client.HTable {
     return result;
   }
   
-  public Object getCurrentRow() {
+  public Object getCurrentRow() throws IOException {
     if (row == null) {
       return "";
     } else if (keyColumn != null) {
