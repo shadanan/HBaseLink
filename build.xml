@@ -26,6 +26,18 @@
     <delete dir="${app.name}/Java"/>
   </target>
 	
+  <target name="debug" description="sets properties for debugging">
+    <echo message="Building in debug mode..."/>
+    <property name="compile.mode" value="debug"/>
+    <property name="java.debug" value="true"/>
+  </target>
+
+  <target name="release" description="sets properties for release builds.">
+    <echo message="Building in release mode..."/>
+    <property name="compile.mode" value="release"/>
+    <property name="java.debug" value="false"/>
+  </target>
+
   <target name="init">
     <tstamp/>
 

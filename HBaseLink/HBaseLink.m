@@ -83,7 +83,7 @@ encodeHTableKey[table_, key_List] := Module[{array, i},
     array = ReturnAsJavaObject[Array`newInstance[JavaNew["java.lang.Object"]@getClass[], Length[key]]];
     For[i = 0, i < Length[key], i += 1,
       Array`set[array, i, MakeJavaObject[key[[i + 1]]]]];
-    Bytes`toStringBinary[table@getTranscoder[]@encode[array]]]
+    Bytes`toStringBinary[table@getKeyTranscoder[]@encode[array]]]
 
 cacheContains[h_HBaseLink, tablestr_String] :=
     getCache[h]@containsKey[JavaNew["java.lang.String", tablestr]]
@@ -107,35 +107,113 @@ getHBaseHTable[h_HBaseLink, tablestr_String] :=
 clearHBaseHTable[h_HBaseLink, tablestr_String] :=
     cacheRemove[h, tablestr]
 
-HBaseSetSchema[h_HBaseLink, tablestr_String, schema___Rule] := 
+getTranscoder[params__] :=
+  JavaNew["com.wolfram.hbaselink." <> First @ params, Sequence @@ (Rest @ params)];
+
+Options[HBaseSetSchema] = {
+  "Key" -> None,
+  "Family" -> None,
+  "Qualifiers" -> None,
+  "Columns" -> None
+}
+
+HBaseSetSchema[h_HBaseLink, tablestr_String, opts : OptionsPattern[HBaseSetSchema]] := 
     Module[
-      {table, index, rule, key, transcoder},
+      {table, index, key, transcoder},
+      
       clearHBaseHTable[h, tablestr];
       table = getHBaseHTable[h, tablestr];
       
-      For[index = 1, index <= Length[{schema}], index += 1,
-        rule = {schema}[[index]];
-        key = rule[[1]];
-        
-        transcoder = JavaNew["com.wolfram.hbaselink." <> rule[[2, 1]], Sequence @@ rule[[2, 2 ;;]]];
+      If[OptionValue["Key"] =!= None,
+        transcoder = getTranscoder[OptionValue["Key"]];
         If[transcoder === $Failed, Return[$Failed]];
-        
-        Which[
-          MatchQ[key, _String] && key === "key",
-          table@setTranscoder[transcoder],
-        
-          MatchQ[key, List[_String, _String]],
-          table@setTranscoder[toBytesBinary[key[[1]]], toBytesBinary[key[[2]]], transcoder],
-        
-          MatchQ[key, List[_String, _String, _Integer, _Integer]],
-          table@setTranscoder[toBytesBinary[key[[1]]], toBytesBinary[key[[2]]], key[[3]], key[[4]], transcoder],
+        table@setKeyTranscoder[transcoder]];
+      
+      If[OptionValue["Family"] =!= None,
+        transcoder = getTranscoder[OptionValue["Family"]];
+        If[transcoder === $Failed, Return[$Failed]];
+        table@setFamilyTranscoder[transcoder]];
+      
+      If[OptionValue["Qualifiers"] =!= None,
+        For[index = 1, index <= Length[OptionValue["Qualifiers"]], index += 1,
+          transcoder = getTranscoder[OptionValue["Qualifiers"][[index, 2]]];
+          If[transcoder === $Failed, Return[$Failed]];
+	      table@setQualifierTranscoder[
+	        OptionValue["Qualifiers"][[index, 1]], transcoder]]];
+      
+      If[OptionValue["Columns"] =!= None,
+        For[index = 1, index <= Length[OptionValue["Columns"]], index += 1,
+          transcoder = getTranscoder[OptionValue["Columns"][[index, 2]]];
+          If[transcoder === $Failed, Return[$Failed]];
           
-          True,
-          Message[HBaseLink::ischema];
-          Return[$Failed];
+          key = OptionValue["Columns"][[index, 1]];
+        
+          Which[
+            MatchQ[key, List[_String]],
+            table@setTranscoder[toBytesBinary[key[[1]]], Null, transcoder],
+        
+            MatchQ[key, List[_String, _String]],
+            table@setTranscoder[toBytesBinary[key[[1]]], toBytesBinary[key[[2]]], transcoder],
+        
+            MatchQ[key, List[_String, _Integer, _Integer]],
+            table@setTranscoder[toBytesBinary[key[[1]]], Null, key[[2]], key[[3]], transcoder],
+        
+            MatchQ[key, List[_String, _String, _Integer, _Integer]],
+            table@setTranscoder[toBytesBinary[key[[1]]], toBytesBinary[key[[2]]], key[[3]], key[[4]], transcoder],
+          
+            True,
+            Message[HBaseLink::ischema];
+            Return[$Failed];
+          ]
         ]
       ]
     ]
+
+Options[setIncludeExclude] = {
+  "IncludeKey" -> False,
+  "IncludeFamily" -> True,
+  "IncludeQualifier" -> True,
+  "IncludeTimestamp" -> True,
+  "IncludeValue" -> True,
+  "KeyOnly" -> False,
+  "FamilyOnly" -> False,
+  "QualifierOnly" -> False,
+  "TimestampOnly" -> False,
+  "ValueOnly" -> False
+}
+
+setIncludeExclude[table_, opts : OptionsPattern[setIncludeExclude]] :=
+  Module[{},
+    table@setIncludeKey[False];
+    table@setIncludeFamily[False];
+    table@setIncludeQualifier[False];
+    table@setIncludeTimestamp[False];
+    table@setIncludeValue[False];
+    
+    Which[
+      OptionValue["KeyOnly"],
+      table@setIncludeKey[True],
+      
+      OptionValue["FamilyOnly"],
+      table@setIncludeFamily[True],
+      
+      OptionValue["QualifierOnly"],
+      table@setIncludeQualifier[True],
+      
+      OptionValue["TimestampOnly"],
+      table@setIncludeTimestamp[True],
+      
+      OptionValue["ValueOnly"],
+      table@setIncludeValue[True],
+      
+      True,
+      table@setIncludeKey[OptionValue["IncludeKey"]];
+      table@setIncludeFamily[OptionValue["IncludeFamily"]];
+      table@setIncludeQualifier[OptionValue["IncludeQualifier"]];
+      table@setIncludeTimestamp[OptionValue["IncludeTimestamp"]];
+      table@setIncludeValue[OptionValue["IncludeValue"]];
+    ]
+  ]
 
 Options[HBaseGet] = {
   "Columns" -> None,
@@ -150,6 +228,8 @@ Options[HBaseGet] = {
 HBaseGet[h_HBaseLink, tablestr_String, key_, opts : OptionsPattern[HBaseGet]] := 
   Module[{table, get},
     table = getHBaseHTable[h, tablestr];
+    
+    setIncludeExclude[table, FilterRules[opts, Options[setIncludeExclude]]];
     
     get = JavaNew["org.apache.hadoop.hbase.client.Get", toBytesBinary[encodeHTableKey[table, key]]];
     If[OptionValue["Families"] =!= None,
@@ -192,12 +272,25 @@ Options[HBaseScan] = {
   "TimeRange" -> None,
   "Filter" -> None,
   "CacheBlocks" -> True,
-  "Limit" -> All
+  "Limit" -> All,
+  "IncludeKey" -> True,
+  "IncludeFamily" -> True,
+  "IncludeQualifier" -> True,
+  "IncludeTimestamp" -> True,
+  "IncludeValue" -> True,
+  "ValueOnly" -> False
 }
 
 HBaseScan[h_HBaseLink, tablestr_String, opts : OptionsPattern[HBaseScan]] :=
   Module[{table, scan, limit},
     table = getHBaseHTable[h, tablestr];
+    
+    table@setIncludeKey[OptionValue["IncludeKey"]];
+    table@setIncludeFamily[OptionValue["IncludeFamily"]];
+    table@setIncludeQualifier[OptionValue["IncludeQualifier"]];
+    table@setIncludeTimestamp[OptionValue["IncludeTimestamp"]];
+    table@setIncludeValue[OptionValue["IncludeValue"]];
+    table@setValueOnly[OptionValue["ValueOnly"]];
     
     scan = JavaNew["org.apache.hadoop.hbase.client.Scan"];
     If[OptionValue["StartRow"] =!= None,
