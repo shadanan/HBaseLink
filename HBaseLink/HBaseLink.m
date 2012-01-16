@@ -170,7 +170,7 @@ HBaseSetSchema[h_HBaseLink, tablestr_String, opts : OptionsPattern[HBaseSetSchem
     ]
 
 Options[setIncludeExclude] = {
-  "IncludeKey" -> False,
+  "IncludeKey" -> True,
   "IncludeFamily" -> True,
   "IncludeQualifier" -> True,
   "IncludeTimestamp" -> True,
@@ -222,7 +222,8 @@ Options[HBaseGet] = {
   "Family" -> None,
   "Versions" -> 1,
   "TimeStamp" -> None,
-  "TimeRange" -> None
+  "TimeRange" -> None,
+  "IncludeKey" -> False
 }
 
 HBaseGet[h_HBaseLink, tablestr_String, key_, opts : OptionsPattern[HBaseGet]] := 
@@ -273,24 +274,14 @@ Options[HBaseScan] = {
   "Filter" -> None,
   "CacheBlocks" -> True,
   "Limit" -> All,
-  "IncludeKey" -> True,
-  "IncludeFamily" -> True,
-  "IncludeQualifier" -> True,
-  "IncludeTimestamp" -> True,
-  "IncludeValue" -> True,
-  "ValueOnly" -> False
+  "IncludeKey" -> False
 }
 
 HBaseScan[h_HBaseLink, tablestr_String, opts : OptionsPattern[HBaseScan]] :=
   Module[{table, scan, limit},
     table = getHBaseHTable[h, tablestr];
     
-    table@setIncludeKey[OptionValue["IncludeKey"]];
-    table@setIncludeFamily[OptionValue["IncludeFamily"]];
-    table@setIncludeQualifier[OptionValue["IncludeQualifier"]];
-    table@setIncludeTimestamp[OptionValue["IncludeTimestamp"]];
-    table@setIncludeValue[OptionValue["IncludeValue"]];
-    table@setValueOnly[OptionValue["ValueOnly"]];
+    setIncludeExclude[table, FilterRules[opts, Options[setIncludeExclude]]];
     
     scan = JavaNew["org.apache.hadoop.hbase.client.Scan"];
     If[OptionValue["StartRow"] =!= None,
