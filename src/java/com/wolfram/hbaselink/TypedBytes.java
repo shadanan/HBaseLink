@@ -11,6 +11,16 @@ import org.apache.hadoop.typedbytes.TypedBytesInput;
 import org.apache.hadoop.typedbytes.TypedBytesOutput;
 
 public class TypedBytes implements Transcoder {
+  private boolean single;
+  
+  public TypedBytes() {
+    this(false);
+  }
+  
+  public TypedBytes(boolean single) {
+    this.single = single;
+  }
+  
   @Override
   public Object decode(byte[] data) throws IOException {
     TypedBytesInput tbin = new TypedBytesInput(new DataInputStream(new ByteArrayInputStream(data)));
@@ -21,7 +31,15 @@ public class TypedBytes implements Transcoder {
       result.add(item);
     }
     
-    return result.toArray();
+    if (single) {
+      if (result.size() == 0) {
+        return null;
+      } else {
+        return result.get(0);
+      }
+    } else {
+      return result.toArray();
+    }
   }
 
   @Override

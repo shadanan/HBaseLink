@@ -18,13 +18,10 @@ HBaseScan::usage = "HBaseScan[link, \"table\"]"
 
 OpenHBaseLink::connfail = "Unable to establish connection with HBase."
 HBaseLink::ischema = "Schema key must be of the form \"key\", {<family>, <qualifier>} or {<family>, <qualifier>, <start>, <stop>}"
+HBaseLink::ifield = "Field \"`1`\" must be one of {\"Key\", \"Family\", \"Qualifier\", \"Timestamp\", \"Value\"}"
 
 Begin["`Private`"]
 (* Implementation of the package *)
-
-toBytesBinary[str_String] := JavaBlock[
-    LoadJavaClass["org.apache.hadoop.hbase.util.Bytes", StaticsVisible -> True];
-    Bytes`toBytesBinary[str]]
 
 OpenHBaseLink[config : Rule[_String, _String]...] := Module[{hBaseLink},
     InstallJava[];
@@ -43,6 +40,221 @@ OpenHBaseLink[config : Rule[_String, _String]...] := Module[{hBaseLink},
 
 getConf[h_HBaseLink] := h[[1]]@getConf[]
 getCache[h_HBaseLink] := h[[1]]@getCache[]
+
+makeJavaObjectArray[list_List] :=
+  Module[{array, i},
+    LoadJavaClass["org.apache.hadoop.hbase.util.Bytes", StaticsVisible -> True];
+    LoadJavaClass["java.lang.reflect.Array", StaticsVisible -> True];
+    array = ReturnAsJavaObject[Array`newInstance[
+      JavaNew["java.lang.Object"]@getClass[], Length[list]]];
+    For[i = 0, i < Length[list], i += 1,
+      Array`set[array, i, MakeJavaObject[list[[i + 1]]]]];
+    array]
+
+toBytesBinary[x_String] := 
+  JavaBlock[
+    LoadJavaClass["org.apache.hadoop.hbase.util.Bytes", StaticsVisible -> True];
+    ReturnAsJavaObject[Bytes`toBytesBinary[x]]]
+
+toBytesBinary[x_] /; 
+    MatchQ[x@getClass[]@getSimpleName[], "byte[]"] := x
+
+toStringBinary[x_String] := x
+    
+toStringBinary[x_] /; 
+    MatchQ[x@getClass[]@getSimpleName[], "byte[]"] := 
+  JavaBlock[
+    LoadJavaClass["org.apache.hadoop.hbase.util.Bytes", StaticsVisible -> True];
+    Bytes`toStringBinary[x]]
+
+(* Key *)
+
+encodeKey[table_, key_String] := 
+  encodeKey[table, toBytesBinary[key]]
+
+encodeKey[table_, key_] /; 
+    MatchQ[key@getClass[]@getSimpleName[], "byte[]"] := 
+  key
+
+encodeKey[table_, key_] :=
+  encodeKey[table, {key}]
+
+encodeKey[table_, key_List] :=
+  With[{
+      array = makeJavaObjectArray[key]},
+    ReturnAsJavaObject[
+      table@getKeyTranscoder[]@encode[array]]]
+
+decodeKey[table_, key_String] :=
+  decodeKey[table, toBytesBinary[key]]
+
+decodeKey[table_, key_] /; 
+    MatchQ[key@getClass[]@getSimpleName[], "byte[]"] :=
+  table@getKeyTranscoder[]@decode[key]
+
+(* Family *)
+
+encodeFamily[table_, family_String] := 
+  encodeFamily[table, toBytesBinary[family]]
+
+encodeFamily[table_, family_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] := 
+  family
+
+encodeFamily[table_, family_] :=
+  encodeFamily[table, {family}]
+
+encodeFamily[table_, family_List] :=
+  With[{
+      array = makeJavaObjectArray[family]},
+    ReturnAsJavaObject[
+      table@getFamilyTranscoder[]@encode[array]]]
+
+decodeFamily[table_, family_String] :=
+  decodeFamily[table, toBytesBinary[family]]
+   
+decodeFamily[table_, family_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] :=
+  table@getFamilyTranscoder[]@decode[family]
+
+(* Qualifier *)
+
+encodeQualifier[table_, family_, qualifier_] :=
+  encodeQualifier[table, encodeFamily[table, family], qualifier]
+
+encodeQualifier[table_, family_, qualifier_String] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] := 
+  encodeQualifier[table, family, toBytesBinary[qualifier]]
+
+encodeQualifier[table_, family_, qualifier_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] :=
+  qualifier
+
+encodeQualifier[table_, family_, qualifier_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] :=
+  encodeQualifier[table, family, {qualifier}]
+
+encodeQualifier[table_, family_, qualifier_List] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] :=
+  With[{
+      array = makeJavaObjectArray[qualifier]},
+    ReturnAsJavaObject[
+      table@getQualifierTranscoder[family]@encode[array]]]
+
+decodeQualifier[table_, family_, qualifier_] :=
+  decodeQualifier[table, encodeFamily[table, family], qualifier]
+
+decodeQualifier[table_, family_, qualifier_String] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] :=
+  decodeQualifier[table, family, toBytesBinary[qualifier]]
+
+decodeQualifier[table_, family_, qualifier_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] :=
+  table@getQualifierTranscoder[family]@decode[qualifier]
+
+(* Value w/o Timestamp *)
+
+encodeValue[table_, family_, qualifier_, value_] := 
+  encodeValue[table, encodeFamily[table, family], qualifier, value]
+
+encodeValue[table_, family_, qualifier_, value_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] := 
+  encodeValue[table, family, encodeQualifier[table, family, qualifier], value]
+
+encodeValue[table_, family_, qualifier_, value_String] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] := 
+  encodeValue[table, family, qualifier, toBytesBinary[value]]
+
+encodeValue[table_, family_, qualifier_, value_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[value@getClass[]@getSimpleName[], "byte[]"] := 
+  value
+
+encodeValue[table_, family_, qualifier_, value_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] := 
+  encodeValue[table, family, qualifier, {value}]
+
+encodeValue[table_, family_, qualifier_, value_List] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] := 
+  With[{
+      array = makeJavaObjectArray[value]},
+    ReturnAsJavaObject[
+      table@getTranscoder[family, qualifier]@encode[array]]]
+
+decodeValue[table_, family_, qualifier_, value_] :=
+  decodeValue[table, encodeFamily[table, family], qualifier, value]
+
+decodeValue[table_, family_, qualifier_, value_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] :=
+  decodeValue[table, family, encodeQualifier[table, family, qualifier], value]
+
+decodeValue[table_, family_, qualifier_, value_String] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] :=
+  decodeValue[table, family, qualifier, toBytesBinary[value]]
+
+decodeValue[table_, family_, qualifier_, value_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[value@getClass[]@getSimpleName[], "byte[]"] :=
+  table@getTranscoder[family, qualifier]@decode[value]
+
+(* Value w/ Timestamp *)
+
+encodeValue[table_, family_, qualifier_, timestamp_Integer, value_] := 
+  encodeValue[table, encodeFamily[table, family], qualifier, timestamp, value]
+
+encodeValue[table_, family_, qualifier_, timestamp_Integer, value_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] := 
+  encodeValue[table, family, encodeQualifier[table, family, qualifier], timestamp, value]
+
+encodeValue[table_, family_, qualifier_, timestamp_Integer, value_String] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] := 
+  encodeValue[table, family, qualifier, timestamp, toBytesBinary[value]]
+
+encodeValue[table_, family_, qualifier_, timestamp_Integer, value_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[value@getClass[]@getSimpleName[], "byte[]"] := 
+  value
+
+encodeValue[table_, family_, qualifier_, timestamp_Integer, value_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] := 
+  encodeValue[table, family, qualifier, timestamp, {value}]
+
+encodeValue[table_, family_, qualifier_, timestamp_Integer, value_List] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] := 
+  With[{
+      array = makeJavaObjectArray[value]},
+    ReturnAsJavaObject[
+      table@getTranscoder[family, qualifier, timestamp]@encode[array]]]
+
+decodeValue[table_, family_, qualifier_, timestamp_Integer, value_] :=
+  decodeValue[table, encodeFamily[table, family], qualifier, timestamp, value]
+
+decodeValue[table_, family_, qualifier_, timestamp_Integer, value_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] :=
+  decodeValue[table, family, encodeQualifier[table, family, qualifier], timestamp, value]
+
+decodeValue[table_, family_, qualifier_, timestamp_Integer, value_String] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] :=
+  decodeValue[table, family, qualifier, timestamp, toBytesBinary[value]]
+
+decodeValue[table_, family_, qualifier_, timestamp_Integer, value_] /; 
+    MatchQ[family@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[qualifier@getClass[]@getSimpleName[], "byte[]"] &&
+    MatchQ[value@getClass[]@getSimpleName[], "byte[]"] :=
+  table@getTranscoder[family, qualifier, timestamp]@decode[value]
 
 getHBaseAdmin[h_HBaseLink] := JavaBlock[
     JavaNew["org.apache.hadoop.hbase.client.HBaseAdmin", getConf[h]]]
@@ -74,16 +286,6 @@ HBaseListColumns[h_HBaseLink, tablestr_String] := Module[{admin, tabledesc, colu
     tabledesc = admin@getTableDescriptor[toBytesBinary[tablestr]];
     columns = tabledesc@getColumnFamilies[];
     #@getNameAsString[] & /@ columns]
-
-encodeHTableKey[table_, key_String] := key;
-
-encodeHTableKey[table_, key_List] := Module[{array, i},
-    LoadJavaClass["org.apache.hadoop.hbase.util.Bytes", StaticsVisible -> True];
-    LoadJavaClass["java.lang.reflect.Array", StaticsVisible -> True];
-    array = ReturnAsJavaObject[Array`newInstance[JavaNew["java.lang.Object"]@getClass[], Length[key]]];
-    For[i = 0, i < Length[key], i += 1,
-      Array`set[array, i, MakeJavaObject[key[[i + 1]]]]];
-    Bytes`toStringBinary[table@getKeyTranscoder[]@encode[array]]]
 
 cacheContains[h_HBaseLink, tablestr_String] :=
     getCache[h]@containsKey[JavaNew["java.lang.String", tablestr]]
@@ -139,7 +341,7 @@ HBaseSetSchema[h_HBaseLink, tablestr_String, opts : OptionsPattern[HBaseSetSchem
           transcoder = getTranscoder[OptionValue["Qualifiers"][[index, 2]]];
           If[transcoder === $Failed, Return[$Failed]];
 	      table@setQualifierTranscoder[
-	        OptionValue["Qualifiers"][[index, 1]], transcoder]]];
+	        toBytesBinary[OptionValue["Qualifiers"][[index, 1]]], transcoder]]];
       
       If[OptionValue["Columns"] =!= None,
         For[index = 1, index <= Length[OptionValue["Columns"]], index += 1,
@@ -170,49 +372,37 @@ HBaseSetSchema[h_HBaseLink, tablestr_String, opts : OptionsPattern[HBaseSetSchem
     ]
 
 Options[setIncludeExclude] = {
-  "IncludeKey" -> True,
-  "IncludeFamily" -> True,
-  "IncludeQualifier" -> True,
-  "IncludeTimestamp" -> True,
-  "IncludeValue" -> True,
-  "KeyOnly" -> False,
-  "FamilyOnly" -> False,
-  "QualifierOnly" -> False,
-  "TimestampOnly" -> False,
-  "ValueOnly" -> False
+  "Include" -> Automatic,
+  "Exclude" -> Automatic
 }
 
 setIncludeExclude[table_, opts : OptionsPattern[setIncludeExclude]] :=
-  Module[{},
-    table@setIncludeKey[False];
-    table@setIncludeFamily[False];
-    table@setIncludeQualifier[False];
-    table@setIncludeTimestamp[False];
-    table@setIncludeValue[False];
+  Module[{validFields, includes},
+    validFields = {"Key", "Family", "Qualifier", "Timestamp", "Value"};
+    Message[HBaseLink::ifield, #] & /@ Complement[Complement[Flatten[Union[
+      {OptionValue["Include"]}, {OptionValue["Exclude"]}]], {Automatic}], validFields];
     
-    Which[
-      OptionValue["KeyOnly"],
-      table@setIncludeKey[True],
+    includes = Which[
+      MatchQ[OptionValue["Include"], List[_String ...]],
+      Intersection[validFields, OptionValue["Include"]],
       
-      OptionValue["FamilyOnly"],
-      table@setIncludeFamily[True],
+      MatchQ[OptionValue["Include"], _String],
+      Intersection[validFields, {OptionValue["Include"]}],
+        
+      True, validFields];
+    
+    includes = Which[
+      MatchQ[OptionValue["Exclude"], List[_String ...]],
+      Complement[includes, OptionValue["Exclude"]],
       
-      OptionValue["QualifierOnly"],
-      table@setIncludeQualifier[True],
-      
-      OptionValue["TimestampOnly"],
-      table@setIncludeTimestamp[True],
-      
-      OptionValue["ValueOnly"],
-      table@setIncludeValue[True],
-      
-      True,
-      table@setIncludeKey[OptionValue["IncludeKey"]];
-      table@setIncludeFamily[OptionValue["IncludeFamily"]];
-      table@setIncludeQualifier[OptionValue["IncludeQualifier"]];
-      table@setIncludeTimestamp[OptionValue["IncludeTimestamp"]];
-      table@setIncludeValue[OptionValue["IncludeValue"]];
-    ]
+      MatchQ[OptionValue["Exclude"], _String],
+      Complement[includes, {OptionValue["Exclude"]}],
+        
+      True, includes];
+    
+    table@setExcludeAll[];
+    With[{method = ToExpression["setInclude" <> #]},
+      table@method[True]] & /@ includes;
   ]
 
 Options[HBaseGet] = {
@@ -223,24 +413,31 @@ Options[HBaseGet] = {
   "Versions" -> 1,
   "TimeStamp" -> None,
   "TimeRange" -> None,
-  "IncludeKey" -> False
+  "Exclude" -> "Key"
 }
 
-HBaseGet[h_HBaseLink, tablestr_String, key_, opts : OptionsPattern[HBaseGet]] := 
+HBaseGet[h_HBaseLink, tablestr_String, key_, opts : OptionsPattern[{HBaseGet, setIncludeExclude}]] := 
   Module[{table, get},
     table = getHBaseHTable[h, tablestr];
     
-    setIncludeExclude[table, FilterRules[opts, Options[setIncludeExclude]]];
+    setIncludeExclude[table, FilterRules[{opts}, Options[setIncludeExclude]]];
     
-    get = JavaNew["org.apache.hadoop.hbase.client.Get", toBytesBinary[encodeHTableKey[table, key]]];
+    get = JavaNew["org.apache.hadoop.hbase.client.Get", 
+      encodeKey[table, key]];
     If[OptionValue["Families"] =!= None,
-      get@addFamily[toBytesBinary[#]] & /@ OptionValue["Families"]];
+      get@addFamily[
+        encodeFamily[table, #]] & /@ OptionValue["Families"]];
     If[OptionValue["Columns"] =!= None,
-      get@addColumn[toBytesBinary[#[[1]]], toBytesBinary[#[[2]]]] & /@ OptionValue["Columns"]];
+      get@addColumn[
+        encodeFamily[table, #[[1]]], 
+        encodeQualifier[table, #[[1]], #[[2]]]] & /@ OptionValue["Columns"]];
     If[OptionValue["Family"] =!= None,
-      get@addFamily[toBytesBinary[OptionValue["Family"]]]];
+      get@addFamily[
+        encodeFamily[table, OptionValue["Family"]]]];
     If[OptionValue["Column"] =!= None,
-      get@addColumn[toBytesBinary[OptionValue["Column"][[1]]], toBytesBinary[OptionValue["Column"][[2]]]]];
+      get@addColumn[
+        encodeFamily[table, OptionValue["Column"][[1]]], 
+        encodeQualifier[table, OptionValue["Column"][[1]], OptionValue["Column"][[2]]]]];
     
     get@setMaxVersions[OptionValue["Versions"]];
     If[OptionValue["TimeStamp"] =!= None,
@@ -273,32 +470,39 @@ Options[HBaseScan] = {
   "TimeRange" -> None,
   "Filter" -> None,
   "CacheBlocks" -> True,
-  "Limit" -> All,
-  "IncludeKey" -> False
+  "Limit" -> All
 }
 
-HBaseScan[h_HBaseLink, tablestr_String, opts : OptionsPattern[HBaseScan]] :=
+HBaseScan[h_HBaseLink, tablestr_String, opts : OptionsPattern[{HBaseScan, setIncludeExclude}]] :=
   Module[{table, scan, limit},
     table = getHBaseHTable[h, tablestr];
     
-    setIncludeExclude[table, FilterRules[opts, Options[setIncludeExclude]]];
+    setIncludeExclude[table, FilterRules[{opts}, Options[setIncludeExclude]]];
     
     scan = JavaNew["org.apache.hadoop.hbase.client.Scan"];
     If[OptionValue["StartRow"] =!= None,
-      scan@setStartRow[toBytesBinary[encodeHTableKey[table, OptionValue["StartRow"]]]]];
+      scan@setStartRow[
+        encodeKey[table, OptionValue["StartRow"]]]];
     If[OptionValue["StopRow"] =!= None,
-      scan@setStopRow[toBytesBinary[encodeHTableKey[table, OptionValue["StopRow"]]]]];
-    
+      scan@setStopRow[
+        encodeKey[table, OptionValue["StopRow"]]]];
     If[OptionValue["Families"] =!= None,
-      scan@addFamily[toBytesBinary[#]] & /@ OptionValue["Families"]];
+      scan@addFamily[
+        encodeFamily[table, #]] & /@ OptionValue["Families"]];
     If[OptionValue["Columns"] =!= None,
-      scan@addColumn[toBytesBinary[#[[1]]], toBytesBinary[#[[2]]]] & /@ OptionValue["Columns"]];
+      scan@addColumn[
+        encodeFamily[table, #[[1]]], 
+        encodeQualifier[table, #[[1]], #[[2]]]] & /@ OptionValue["Columns"]];
     If[OptionValue["Family"] =!= None,
-      scan@addFamily[toBytesBinary[OptionValue["Family"]]]];
+      scan@addFamily[
+        encodeFamily[table, OptionValue["Family"]]]];
     If[OptionValue["Column"] =!= None,
-      scan@addColumn[toBytesBinary[OptionValue["Column"][[1]]], toBytesBinary[OptionValue["Column"][[2]]]]];
+      scan@addColumn[
+        encodeFamily[table, OptionValue["Column"][[1]]], 
+        encodeQualifier[table, OptionValue["Column"][[1]], OptionValue["Column"][[2]]]]];
     If[And @@ (OptionValue[#] === None & /@ {"Columns", "Families", "Column", "Family"}),
-      scan@addFamily[toBytesBinary[#]] & /@ HBaseListColumns[h, tablestr]];
+      scan@addFamily[
+        encodeFamily[table, #]] & /@ HBaseListColumns[h, tablestr]];
 
     If[OptionValue["Filter"] =!= None,
       scan@setFilter[OptionValue["Filter"]]];

@@ -17,6 +17,25 @@ import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 public class HTable extends org.apache.hadoop.hbase.client.HTable {
+  private class Family {
+    byte[] family;
+    
+    public Family(byte[] family) {
+      this.family = family;
+    }
+    
+    @Override
+    public int hashCode() {
+      return Arrays.hashCode(family);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+      Family c = (Family)obj;
+      return Arrays.equals(family, c.family);
+    }
+  }
+  
   private class Column {
     byte[] family;
     byte[] qualifier;
@@ -77,6 +96,24 @@ public class HTable extends org.apache.hadoop.hbase.client.HTable {
     if (includeValue) includeSize++;
   }
   
+  public void setIncludeAll() {
+    includeKey = true;
+    includeFamily = true;
+    includeQualifier = true;
+    includeTimestamp = true;
+    includeValue = true;
+    updateIncludeSize();
+  }
+  
+  public void setExcludeAll() {
+    includeKey = false;
+    includeFamily = false;
+    includeQualifier = false;
+    includeTimestamp = false;
+    includeValue = false;
+    updateIncludeSize();
+  }
+  
   public void setIncludeKey(boolean includeKey) {
     this.includeKey = includeKey;
   }
@@ -104,7 +141,7 @@ public class HTable extends org.apache.hadoop.hbase.client.HTable {
   private Transcoder defaultTranscoder = new StringBinary();
   private Transcoder keyTranscoder = null;
   private Transcoder familyTranscoder = null;
-  private HashMap<String, Transcoder> qualifierTranscoders = new HashMap<String, Transcoder>();
+  private HashMap<Family, Transcoder> qualifierTranscoders = new HashMap<Family, Transcoder>();
   private HashMap<Column, Transcoder> fieldTranscoders = new HashMap<Column, Transcoder>();
   private HashMap<Column, TreeMap<Interval, Transcoder>> versionedFieldTranscoders = new HashMap<Column, TreeMap<Interval, Transcoder>>();
   
@@ -116,8 +153,8 @@ public class HTable extends org.apache.hadoop.hbase.client.HTable {
     familyTranscoder = transcoder;
   }
   
-  public void setQualifierTranscoder(String family, Transcoder qualifierTranscoder) {
-    qualifierTranscoders.put(family, qualifierTranscoder);
+  public void setQualifierTranscoder(byte[] family, Transcoder qualifierTranscoder) {
+    qualifierTranscoders.put(new Family(family), qualifierTranscoder);
   }
   
   public void setTranscoder(byte[] family, byte[] qualifier, Transcoder transcoder) {
@@ -143,21 +180,38 @@ public class HTable extends org.apache.hadoop.hbase.client.HTable {
   }
   
   public Transcoder getKeyTranscoder() {
-    if (keyTranscoder == null) return defaultTranscoder;
+    if (keyTranscoder == null) 
+      return defaultTranscoder;
     return keyTranscoder;
   }
   
   public Transcoder getFamilyTranscoder() {
-    if (familyTranscoder == null) return defaultTranscoder;
+    if (familyTranscoder == null) 
+      return defaultTranscoder;
     return familyTranscoder;
   }
   
-  public Transcoder getQualifierTranscoder(String family) {
-    if (qualifierTranscoders.containsKey(family)) {
-      return qualifierTranscoders.get(family);
+  public Transcoder getQualifierTranscoder(byte[] family) {
+    if (qualifierTranscoders.containsKey(new Family(family))) {
+      return qualifierTranscoders.get(new Family(family));
     } else {
       return defaultTranscoder;
     }
+  }
+  
+  public Transcoder getTranscoder(byte[] family, byte[] qualifier) {
+    Transcoder result = null;
+    
+    if (result == null)
+      result = getTranscoder(new Column(family, qualifier));
+    
+    if (result == null)
+      result = getTranscoder(new Column(family, null));
+    
+    if (result == null)
+      result = defaultTranscoder;
+    
+    return result;
   }
   
   public Transcoder getTranscoder(byte[] family, byte[] qualifier, long timestamp) {
@@ -170,10 +224,7 @@ public class HTable extends org.apache.hadoop.hbase.client.HTable {
       result = getTranscoder(new Column(family, null), timestamp);
     
     if (result == null)
-      result = getTranscoder(new Column(family, qualifier));
-    
-    if (result == null)
-      result = getTranscoder(new Column(family, null));
+      result = getTranscoder(family, qualifier);
     
     if (result == null)
       result = defaultTranscoder;
@@ -233,7 +284,7 @@ public class HTable extends org.apache.hadoop.hbase.client.HTable {
         if (includeFamily)
           row[index++] = getFamilyTranscoder().decode(family);
         else if (includeQualifier)
-          row[index++] = getQualifierTranscoder(Bytes.toStringBinary(family)).decode(qualifier);
+          row[index++] = getQualifierTranscoder(family).decode(qualifier);
         else if (includeTimestamp)
           row[index++] = timestamp;
         else if (includeValue)
@@ -246,7 +297,7 @@ public class HTable extends org.apache.hadoop.hbase.client.HTable {
         if (includeFamily)
           column[findex++] = getFamilyTranscoder().decode(family);
         if (includeQualifier)
-          column[findex++] = getQualifierTranscoder(Bytes.toStringBinary(family)).decode(qualifier);
+          column[findex++] = getQualifierTranscoder(family).decode(qualifier);
         if (includeTimestamp)
           column[findex++] = timestamp;
         if (includeValue)

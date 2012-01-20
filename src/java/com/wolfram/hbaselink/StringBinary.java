@@ -13,9 +13,10 @@ public class StringBinary implements Transcoder {
 
   @Override
   public byte[] encode(Object... objects) throws IOException {
-    if (objects.length != 1 && objects[0].getClass() != String.class) {
+    if (objects.length == 1 && objects[0].getClass() == String.class) {
+      return Bytes.toBytesBinary((String)objects[0]);
+    } else {
       throw new IOException("Transcoder can only encode String objects");
     }
-    return Bytes.toBytesBinary((String)objects[0]);
   }
 }
