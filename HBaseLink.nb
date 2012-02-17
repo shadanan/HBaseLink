@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[     55062,       1344]
-NotebookOptionsPosition[     52523,       1251]
-NotebookOutlinePosition[     52902,       1268]
-CellTagsIndexPosition[     52859,       1265]
+NotebookDataLength[     68718,       1684]
+NotebookOptionsPosition[     65546,       1571]
+NotebookOutlinePosition[     65924,       1588]
+CellTagsIndexPosition[     65881,       1585]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -52,7 +52,7 @@ Cell[BoxData[
     RowBox[{"JavaObject", "[", 
      RowBox[{"com", ".", "wolfram", ".", "hbaselink", ".", "HBaseLink"}], 
      "]"}], "\[RightGuillemet]"}],
-   JLink`Objects`vm1`JavaObject32194281892478977], "]"}]], "Output",
+   JLink`Objects`vm1`JavaObject19964894287757313], "]"}]], "Output",
  InitializationCell->True,
  CellChangeTimes->{
   3.5345941246374407`*^9, 3.534594157492566*^9, 3.534594247829774*^9, 
@@ -110,36 +110,60 @@ Cell[BoxData[
    3.536085498556699*^9, 3.536085648085737*^9, 3.536088935496461*^9, 
    3.536089013207857*^9, 3.536090266294626*^9, 3.536090414468526*^9, 
    3.536091262171933*^9, 3.536091494527049*^9, {3.53609156804193*^9, 
-   3.536091591880289*^9}, 3.536606286508523*^9}]
+   3.536091591880289*^9}, 3.536606286508523*^9, 3.536689941640306*^9, 
+   3.536692443453227*^9, 3.536694213657638*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"HBaseListTables", "[", "link", "]"}]], "Input",
- CellChangeTimes->{{3.536606292948209*^9, 3.53660630745574*^9}}],
+ RowBox[{
+  RowBox[{"HBaseListTables", "[", "link", "]"}], "//", "TableForm"}]], "Input",\
+
+ CellChangeTimes->{{3.536606292948209*^9, 3.53660630745574*^9}, {
+  3.536689964686935*^9, 3.5366899659158173`*^9}}],
 
 Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{"\<\"bin_clickthroughs_hourly\"\>", 
-   ",", "\<\"bin_cookie_visitors_hourly\"\>", 
-   ",", "\<\"bin_host_webstats_day_intervals\"\>", 
-   ",", "\<\"bin_host_webstats_hour_intervals\"\>", 
-   ",", "\<\"bin_hostua_visitors_hourly\"\>", 
-   ",", "\<\"bin_page_page_views_hourly\"\>", 
-   ",", "\<\"bin_path_webstats_day_intervals\"\>", 
-   ",", "\<\"bin_path_webstats_hour_intervals\"\>", 
-   ",", "\<\"bin_query_webstats_day_intervals\"\>", 
-   ",", "\<\"bin_query_webstats_hour_intervals\"\>", 
-   ",", "\<\"bin_referrers_args_daily\"\>", 
-   ",", "\<\"bin_referrers_hourly\"\>", 
-   ",", "\<\"bin_request_args_hourly\"\>", 
-   ",", "\<\"bin_site_page_views_hourly\"\>", 
-   ",", "\<\"bin_url_webstats_hour_intervals\"\>", 
-   ",", "\<\"build_status\"\>", ",", "\<\"cookie_session\"\>", 
-   ",", "\<\"hostua_session\"\>", ",", "\<\"remote_session\"\>", 
-   ",", "\<\"request\"\>", ",", "\<\"shad\"\>"}], "}"}]], "Output",
- CellChangeTimes->{3.5366063124620743`*^9}]
+ TagBox[
+  TagBox[GridBox[{
+     {"\<\"bin_clickthroughs_hourly\"\>"},
+     {"\<\"bin_cookie_visitors_hourly\"\>"},
+     {"\<\"bin_host_webstats_day_intervals\"\>"},
+     {"\<\"bin_host_webstats_hour_intervals\"\>"},
+     {"\<\"bin_hostua_visitors_hourly\"\>"},
+     {"\<\"bin_page_page_views_hourly\"\>"},
+     {"\<\"bin_path_webstats_day_intervals\"\>"},
+     {"\<\"bin_path_webstats_hour_intervals\"\>"},
+     {"\<\"bin_query_webstats_day_intervals\"\>"},
+     {"\<\"bin_query_webstats_hour_intervals\"\>"},
+     {"\<\"bin_referrers_args_daily\"\>"},
+     {"\<\"bin_referrers_hourly\"\>"},
+     {"\<\"bin_request_args_hourly\"\>"},
+     {"\<\"bin_site_page_views_hourly\"\>"},
+     {"\<\"bin_url_webstats_hour_intervals\"\>"},
+     {"\<\"build_status\"\>"},
+     {"\<\"cookie_session\"\>"},
+     {"\<\"hostua_session\"\>"},
+     {"\<\"remote_session\"\>"},
+     {"\<\"request\"\>"},
+     {"\<\"shad\"\>"}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.5599999999999999]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}],
+   Column],
+  Function[BoxForm`e$, 
+   TableForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{
+  3.5366063124620743`*^9, {3.536689960020688*^9, 3.5366899664968777`*^9}, 
+   3.536692450764546*^9, 3.5366942174483423`*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -207,7 +231,8 @@ input/?i=integrate+-5%281%2Be%5Ex%29%5E%281%2F2%29\"\>"}], "}"}], ",",
      RowBox[{"\<\"summary\"\>", ",", "\<\"user_id\"\>", ",", "1320284791934", 
       ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x00\\\\x1E169.231.13.43.\
 1288412012191129\"\>"}], "}"}]}], "}"}], "}"}]], "Output",
- CellChangeTimes->{3.536606337911539*^9}]
+ CellChangeTimes->{3.536606337911539*^9, 3.536689972552099*^9, 
+  3.536692460439242*^9, 3.53669422015447*^9}]
 }, Open  ]],
 
 Cell[BoxData[
@@ -313,8 +338,303 @@ h=1162&id=pod_0100\"\>"}], "}"}], ",",
      RowBox[{"\<\"summary\"\>", ",", "\<\"user_id\"\>", ",", "1320284791934", 
       ",", "\<\"169.231.13.43.1288412012191129\"\>"}], "}"}]}], "}"}], 
   "}"}]], "Output",
- CellChangeTimes->{3.5366066621038933`*^9}]
+ CellChangeTimes->{3.5366066621038933`*^9, 3.536690145865719*^9, 
+  3.5366926245816393`*^9, 3.536694224525878*^9}]
 }, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"HBaseScan", "[", 
+  RowBox[{"link", ",", "\"\<request\>\"", ",", 
+   RowBox[{"\"\<Limit\>\"", "\[Rule]", "1"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5366926969888487`*^9, 3.5366927060868*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"\<\"api.wolframalpha.com:MG\\\\xA1a:colo4b-webprd3.wolfram.com:\\\
+\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\xA8\"\>", ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"agent\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x00\\\\x18Wolfram Android App/null\"\
+\>"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"cookie\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x00\\\\x1F192.148.117.79.\
+1296540001674563\"\>"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"host_or_ip\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x00\\\\x0E192.148.117.79\"\>"}], 
+     "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"machine\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x00\\\\x1Acolo4b-webprd3.wolfram.com\
+\"\>"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"method\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x00\\\\x03GET\"\>"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"offset\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x04\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\\
+xA8\"\>"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"protocol\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x00\\\\x04http\"\>"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"query\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x01\\\\x05appid=3H4296-5YPAGQUJK7&\
+input=whats+the+australian+presedent&format=image,plaintext,sound&async=0.25&\
+scantimeout=1.0&latlong=-28.87140582,153.05061412&sidebarlinks=true&\
+reinterpret=true&width=792&maxwidth=1192&device=Android&sig=\
+2E931182A65D2865E736E2454CDD1F0D\"\>"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"referrer\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x00\\\\x01-\"\>"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"status\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x03\\\\x00\\\\x00\\\\x00\\\\xC8\"\>"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"timestamp\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x03MG\\\\xA1a\"\>"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"uri\"\>", ",", "1298836466983", 
+      ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x00\\\\x0D/v1/query.jsp\"\>"}], 
+     "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"http\"\>", ",", "\<\"virtual_host\"\>", ",", 
+      "1298836466983", 
+      ",", "\<\"\\\\x07\\\\x00\\\\x00\\\\x00\\\\x14api.wolframalpha.com\"\>"}]\
+, "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\<\"session\"\>", ",", "\<\"cookie\"\>", ",", "1298834572442", 
+      ",", "\<\"MG\\\\xA1a192.148.117.79.1296540001674563\"\>"}], "}"}], ",", 
+    
+    RowBox[{"{", 
+     RowBox[{"\<\"session\"\>", ",", "\<\"hostua\"\>", ",", "1298836466983", 
+      ",", "\<\"MG\\\\xA1a192.148.117.79:Wolfram Android App/null\"\>"}], 
+     "}"}]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.5366927066703587`*^9, 3.536694226795898*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"HBaseSetSchema", "[", 
+  RowBox[{"link", ",", "\"\<request\>\"", ",", "\[IndentingNewLine]", 
+   RowBox[{"\"\<Key\>\"", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<PackedBinary\>\"", ",", "\"\<Y:*lx:Y:*q\>\""}], "}"}]}], 
+   ",", "\[IndentingNewLine]", 
+   RowBox[{"\"\<Columns\>\"", "\[Rule]", 
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", "\"\<http\>\"", "}"}], "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"\"\<TypedBytes\>\"", ",", "True"}], "}"}]}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"{", "\"\<session\>\"", "}"}], "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"\"\<PackedBinary\>\"", ",", "\"\<lA*\>\""}], "}"}]}]}], 
+     "}"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.536692731815234*^9, 3.5366927762443542`*^9}, {
+  3.5366928210397*^9, 3.536692850742921*^9}, {3.5366929658451757`*^9, 
+  3.536693063032126*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"HBaseGet", "[", 
+  RowBox[{"link", ",", "\"\<request\>\"", ",", 
+   RowBox[{"{", 
+    RowBox[{
+    "\"\<www.wolframalpha.com\>\"", ",", "1288414809", ",", 
+     "\"\<colo4a-webprd3.wolfram.com\>\"", ",", "13190"}], "}"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.536693095022509*^9, 3.536693100678706*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"\<\"www.wolframalpha.com\"\>", ",", "1288414809", 
+     ",", "\<\"colo4a-webprd3.wolfram.com\"\>", ",", "13190"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"agent\"\>", ",", "1320285197136", 
+     ",", "\<\"Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; \
+Trident/4.0; GTB6.5; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR \
+3.0.30729; Media Center PC 6.0; .NET4.0C; InfoPath.3)\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"cookie\"\>", ",", "1320285197136", 
+     ",", "\<\"169.231.13.43.1288412012191129\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"host_or_ip\"\>", ",", "1320285197136", 
+     ",", "\<\"169.231.13.43\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"machine\"\>", ",", "1320285197136", 
+     ",", "\<\"colo4a-webprd3.wolfram.com\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"method\"\>", ",", "1320285197136", 
+     ",", "\<\"GET\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"offset\"\>", ",", "1320285197136", ",", 
+     "13190"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"protocol\"\>", ",", "1320285197136", 
+     ",", "\<\"http\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"query\"\>", ",", "1320285197136", 
+     ",", "\<\"compTO=true&i=integrate+-5(1%2be%5ex)%5e(1%2f2)\"\>"}], "}"}], 
+   ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"referrer\"\>", ",", "1320285197136", 
+     ",", "\<\"http://www.wolframalpha.com/input/?i=integrate+-5%281%2Be%5Ex%\
+29%5E%281%2F2%29\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"status\"\>", ",", "1320285197136", ",", 
+     "200"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"timestamp\"\>", ",", "1320285197136", 
+     ",", "1288414809"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"uri\"\>", ",", "1320285197136", 
+     ",", "\<\"/input/timeout.jsp\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"http\"\>", ",", "\<\"virtual_host\"\>", ",", "1320285197136",
+      ",", "\<\"www.wolframalpha.com\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"session\"\>", ",", "\<\"cookie\"\>", ",", "1320284783299", 
+     ",", 
+     RowBox[{"{", 
+      RowBox[{"1288414800", ",", "\<\"169.231.13.43.1288412012191129\"\>"}], 
+      "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"session\"\>", ",", "\<\"hostua\"\>", ",", "1320285197138", 
+     ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "1288414800", 
+       ",", "\<\"169.231.13.43:Mozilla/4.0 (compatible; MSIE 8.0; Windows NT \
+6.1; Trident/4.0; GTB6.5; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET \
+CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; InfoPath.3)\"\>"}], "}"}]}], 
+    "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.536693158304093*^9, 3.536694232717537*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"HBaseGet", "[", 
+  RowBox[{"link", ",", "\"\<request\>\"", ",", 
+   RowBox[{"{", 
+    RowBox[{
+    "\"\<www.wolframalpha.com\>\"", ",", "1288414809", ",", 
+     "\"\<colo4a-webprd3.wolfram.com\>\"", ",", "13190"}], "}"}], ",", 
+   RowBox[{"\"\<Include\>\"", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<Key\>\"", ",", "\"\<Value\>\""}], "}"}]}]}], "]"}]], "Input",\
+
+ CellChangeTimes->{{3.5366933216226273`*^9, 3.536693326748886*^9}, {
+  3.536693528362556*^9, 3.5366935295996113`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"\<\"www.wolframalpha.com\"\>", ",", "1288414809", 
+     ",", "\<\"colo4a-webprd3.wolfram.com\"\>", ",", "13190"}], "}"}], 
+   ",", "\<\"Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; \
+GTB6.5; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; \
+Media Center PC 6.0; .NET4.0C; InfoPath.3)\"\>", 
+   ",", "\<\"169.231.13.43.1288412012191129\"\>", 
+   ",", "\<\"169.231.13.43\"\>", ",", "\<\"colo4a-webprd3.wolfram.com\"\>", 
+   ",", "\<\"GET\"\>", ",", "13190", ",", "\<\"http\"\>", 
+   ",", "\<\"compTO=true&i=integrate+-5(1%2be%5ex)%5e(1%2f2)\"\>", 
+   ",", "\<\"http://www.wolframalpha.com/input/?i=integrate+-5%281%2Be%5Ex%29%\
+5E%281%2F2%29\"\>", ",", "200", ",", "1288414809", 
+   ",", "\<\"/input/timeout.jsp\"\>", ",", "\<\"www.wolframalpha.com\"\>", 
+   ",", 
+   RowBox[{"{", 
+    RowBox[{"1288414800", ",", "\<\"169.231.13.43.1288412012191129\"\>"}], 
+    "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+    "1288414800", 
+     ",", "\<\"169.231.13.43:Mozilla/4.0 (compatible; MSIE 8.0; Windows NT \
+6.1; Trident/4.0; GTB6.5; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET \
+CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; InfoPath.3)\"\>"}], "}"}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.536693327495208*^9, 3.536693529980895*^9, 
+  3.536694235107505*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"start", "=", 
+  RowBox[{"DatePlus", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"DateList", "[", "]"}], "[", 
+     RowBox[{"[", 
+      RowBox[{"1", ";;", "3"}], "]"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"-", "7"}], ",", "\"\<Day\>\""}], "}"}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"startTime", "=", 
+  RowBox[{
+   RowBox[{"AbsoluteTime", "[", "start", "]"}], "-", 
+   RowBox[{"AbsoluteTime", "[", 
+    RowBox[{"{", 
+     RowBox[{"1970", ",", "1", ",", "1"}], "}"}], 
+    "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{"endTime", "=", 
+  RowBox[{
+   RowBox[{"AbsoluteTime", "[", 
+    RowBox[{"DatePlus", "[", 
+     RowBox[{"start", ",", 
+      RowBox[{"{", 
+       RowBox[{"1", ",", "\"\<Minute\>\""}], "}"}]}], "]"}], "]"}], "-", 
+   RowBox[{"AbsoluteTime", "[", 
+    RowBox[{"{", 
+     RowBox[{"1970", ",", "1", ",", "1"}], "}"}], "]"}]}]}]}], "Input",
+ CellChangeTimes->{{3.5366937187854958`*^9, 3.5366939474223337`*^9}, {
+  3.536694204685648*^9, 3.536694205340275*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"2012", ",", "1", ",", "20"}], "}"}]], "Output",
+ CellChangeTimes->{{3.536693751783989*^9, 3.536693756052142*^9}, 
+   3.536693786218799*^9, {3.5366938248385553`*^9, 3.5366938277117023`*^9}, 
+   3.536693949885655*^9, 3.536694237911826*^9}],
+
+Cell[BoxData["1327017600"], "Output",
+ CellChangeTimes->{{3.536693751783989*^9, 3.536693756052142*^9}, 
+   3.536693786218799*^9, {3.5366938248385553`*^9, 3.5366938277117023`*^9}, 
+   3.536693949885655*^9, 3.5366942379141073`*^9}],
+
+Cell[BoxData["1327017660"], "Output",
+ CellChangeTimes->{{3.536693751783989*^9, 3.536693756052142*^9}, 
+   3.536693786218799*^9, {3.5366938248385553`*^9, 3.5366938277117023`*^9}, 
+   3.536693949885655*^9, 3.536694237915856*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data", "=", 
+   RowBox[{"HBaseScan", "[", 
+    RowBox[{"link", ",", "\"\<cookie_session\>\"", ",", 
+     RowBox[{"\"\<StartRow\>\"", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"\"\<*\>\"", ",", "\"\<wolframalpha\>\""}], "}"}]}], ",", 
+     RowBox[{"\"\<StopRow\>\"", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"endTime", ",", "\"\<\>\""}], "}"}]}]}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.5366939597024193`*^9, 3.5366940163203697`*^9}, {
+  3.536694257784596*^9, 3.536694259102927*^9}, {3.536694312199544*^9, 
+  3.536694319187447*^9}}],
 
 Cell[CellGroupData[{
 
@@ -1249,8 +1569,8 @@ Cell[BoxData[
    3.536090825211194*^9}]
 }, Open  ]]
 },
-WindowSize->{740, 867},
-WindowMargins->{{Automatic, -877}, {130, Automatic}},
+WindowSize->{809, 1028},
+WindowMargins->{{Automatic, -809}, {0, Automatic}},
 ShowSelection->True,
 FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (October 2, \
 2011)",
@@ -1270,81 +1590,101 @@ Notebook[{
 Cell[557, 20, 198, 4, 27, "Input",
  InitializationCell->True],
 Cell[CellGroupData[{
-Cell[780, 28, 815, 17, 88, "Input",
+Cell[780, 28, 815, 17, 73, "Input",
  InitializationCell->True],
-Cell[1598, 47, 4351, 65, 27, "Output",
+Cell[1598, 47, 4421, 66, 27, "Output",
  InitializationCell->True]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[5986, 117, 136, 2, 27, "Input"],
-Cell[6125, 121, 1004, 20, 118, "Output"]
+Cell[6056, 118, 221, 5, 27, "Input"],
+Cell[6280, 125, 1560, 40, 361, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[7166, 146, 227, 4, 27, "Input"],
-Cell[7396, 152, 3087, 57, 343, "Output"]
+Cell[7877, 170, 227, 4, 27, "Input"],
+Cell[8107, 176, 3155, 58, 328, "Output"]
 }, Open  ]],
-Cell[10498, 212, 1558, 32, 133, "Input"],
+Cell[11277, 237, 1558, 32, 133, "Input"],
 Cell[CellGroupData[{
-Cell[12081, 248, 161, 3, 27, "Input"],
-Cell[12245, 253, 2829, 62, 283, "Output"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[15111, 320, 330, 7, 27, "Input"],
-Cell[15444, 329, 2575, 61, 253, "Output"]
+Cell[12860, 273, 161, 3, 27, "Input"],
+Cell[13024, 278, 2900, 63, 253, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[18056, 395, 534, 8, 27, "Input"],
-Cell[18593, 405, 10350, 254, 533, "Output"]
+Cell[15961, 346, 220, 4, 27, "Input"],
+Cell[16184, 352, 3261, 64, 298, "Output"]
+}, Open  ]],
+Cell[19460, 419, 934, 22, 88, "Input"],
+Cell[CellGroupData[{
+Cell[20419, 445, 333, 8, 43, "Input"],
+Cell[20755, 455, 3018, 65, 328, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[28980, 664, 597, 12, 43, "Input"],
-Cell[29580, 678, 806, 17, 43, "Output"]
+Cell[23810, 525, 512, 12, 43, "Input"],
+Cell[24325, 539, 1371, 28, 193, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[30423, 700, 246, 6, 27, "Input"],
-Cell[30672, 708, 2744, 60, 283, "Output"]
+Cell[25733, 572, 1029, 30, 58, "Input"],
+Cell[26765, 604, 277, 5, 27, "Output"],
+Cell[27045, 611, 229, 3, 27, "Output"],
+Cell[27277, 616, 227, 3, 27, "Output"]
+}, Open  ]],
+Cell[27519, 622, 590, 14, 43, "Input"],
+Cell[CellGroupData[{
+Cell[28134, 640, 330, 7, 27, "Input"],
+Cell[28467, 649, 2575, 61, 208, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[33453, 773, 136, 2, 27, "Input"],
-Cell[33592, 777, 1410, 26, 118, "Output"]
+Cell[31079, 715, 534, 8, 27, "Input"],
+Cell[31616, 725, 10350, 254, 533, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[35039, 808, 292, 5, 27, "Input"],
-Cell[35334, 815, 989, 15, 27, "Output"]
+Cell[42003, 984, 597, 12, 43, "Input"],
+Cell[42603, 998, 806, 17, 43, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[36360, 835, 194, 3, 27, "Input"],
-Cell[36557, 840, 1162, 23, 73, "Output"]
+Cell[43446, 1020, 246, 6, 27, "Input"],
+Cell[43695, 1028, 2744, 60, 238, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[37756, 868, 388, 9, 27, "Input"],
-Cell[38147, 879, 2786, 49, 79, "Output"]
-}, Open  ]],
-Cell[40948, 931, 1279, 31, 103, "Input"],
-Cell[CellGroupData[{
-Cell[42252, 966, 257, 6, 27, "Input"],
-Cell[42512, 974, 644, 15, 43, "Output"]
+Cell[46476, 1093, 136, 2, 27, "Input"],
+Cell[46615, 1097, 1410, 26, 118, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[43193, 994, 585, 12, 43, "Input"],
-Cell[43781, 1008, 250, 6, 27, "Output"]
+Cell[48062, 1128, 292, 5, 27, "Input"],
+Cell[48357, 1135, 989, 15, 27, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[44068, 1019, 227, 4, 27, "Input"],
-Cell[44298, 1025, 637, 9, 27, "Output"]
+Cell[49383, 1155, 194, 3, 27, "Input"],
+Cell[49580, 1160, 1162, 23, 58, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[44972, 1039, 701, 15, 43, "Input"],
-Cell[45676, 1056, 2937, 71, 133, "Output"]
+Cell[50779, 1188, 388, 9, 27, "Input"],
+Cell[51170, 1199, 2786, 49, 79, "Output"]
+}, Open  ]],
+Cell[53971, 1251, 1279, 31, 103, "Input"],
+Cell[CellGroupData[{
+Cell[55275, 1286, 257, 6, 27, "Input"],
+Cell[55535, 1294, 644, 15, 43, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[48650, 1132, 780, 18, 58, "Input"],
-Cell[49433, 1152, 1422, 46, 58, "Output"]
+Cell[56216, 1314, 585, 12, 43, "Input"],
+Cell[56804, 1328, 250, 6, 27, "Output"]
 }, Open  ]],
-Cell[50870, 1201, 357, 9, 27, "Input"],
 Cell[CellGroupData[{
-Cell[51252, 1214, 346, 7, 27, "Input"],
-Cell[51601, 1223, 906, 25, 43, "Output"]
+Cell[57091, 1339, 227, 4, 27, "Input"],
+Cell[57321, 1345, 637, 9, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[57995, 1359, 701, 15, 43, "Input"],
+Cell[58699, 1376, 2937, 71, 133, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[61673, 1452, 780, 18, 58, "Input"],
+Cell[62456, 1472, 1422, 46, 58, "Output"]
+}, Open  ]],
+Cell[63893, 1521, 357, 9, 27, "Input"],
+Cell[CellGroupData[{
+Cell[64275, 1534, 346, 7, 27, "Input"],
+Cell[64624, 1543, 906, 25, 43, "Output"]
 }, Open  ]]
 }
 ]
