@@ -76,6 +76,8 @@ public class PackedBinary implements Transcoder {
   }
   
   public PackedBinary(String format, boolean single) {
+    format = Bytes.toString(Bytes.toBytesBinary(format));
+    
     this.single = single;
     ArrayList<String> dirs = new ArrayList<String>();
     
